@@ -69,11 +69,11 @@ func setHostFact(w http.ResponseWriter, r *http.Request) {
 func getInventory(w http.ResponseWriter, r *http.Request) {
 	outputInvMap := make(map[string]interface{})
 	hostInventory := inv.GetInventory()
+	outputInvMap["_meta"] = make(map[string]interface{})
+	outputInvMap["_meta"].(map[string]interface{})["hostvars"] = make(map[string]interface{})
 	for hgname := range hostInventory {
 		outputInvMap[hgname] = make(map[string][]string)
 		outputInvMap[hgname].(map[string][]string)["hosts"] = make([]string, 0, 65000)
-		outputInvMap["_meta"] = make(map[string]interface{})
-		outputInvMap["_meta"].(map[string]interface{})["hostvars"] = make(map[string]interface{})
 		hosts := hostInventory[hgname].GetHosts()
 		for hostname := range hosts {
 			// We dynamically create a inventory as per ansible wants it to be
