@@ -164,6 +164,10 @@ func NewInventory(dataStorePath string, flushInterval uint16) *Inventory {
 	return &inv
 }
 
+// GetInventory retrieves the inventory from the inventory database
+func (inv *Inventory) GetInventory() map[string]*HostGroup {
+	return inv.Hostgroups
+}
 // toJSON converts the current state of the inventory structure to JSON
 // representational form which can be written to disk or transmitted back
 // to the caller. In case of error, the function returns a nil value.
@@ -257,14 +261,17 @@ func (inv Inventory) GetHosts(hgname string) map[string]*Host {
 
 // SetHostFact sets a new fact for the host. If the fact already exists,
 // it's value is overwritten
-func (inv *Inventory) SetHostFact(hgname string, hname string, fname string, fval string) {
+func (inv *Inventory) SetHostFact(hgname string, hname string, fname string, fval string) bool {
 	hostgroup := inv.GetHostgroup(hgname)
 	if hostgroup != nil {
 		host := hostgroup.GetHost(hname)
 		if host != nil {
 			host.SetFact(fname, fval)
+			return true
 		}
+		return false
 	}
+	return false
 }
 
 func (inv *Inventory) flushInventoryService() {
