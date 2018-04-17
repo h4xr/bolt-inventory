@@ -5,16 +5,15 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"time"
-	"fmt"
-	"flag"
-	"net/http"
 )
 
 var (
-	httpClient	*http.Client
+	httpClient *http.Client
 )
 
 func init() {
@@ -25,12 +24,16 @@ func init() {
 	}
 }
 
-// argProcessor initializes the argument processor to take up the arguments 
+// argProcessor initializes the argument processor to take up the arguments
 // that are being provided as an input to the program
 func argProcessor() {
 	// currently we only listen to the --list argument and don't do
 	// any custom processing using that argument.
-	flag.Parse()
+
+	args := os.Args
+	if len(args) != 0 {
+		listProcessor()
+	}
 }
 
 func listProcessor() {
