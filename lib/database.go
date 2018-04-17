@@ -150,6 +150,16 @@ func NewInventory(dataStorePath string, flushInterval uint16) *Inventory {
 		if ok != true {
 			log.Fatalf("Unable to create a datastore %s", err)
 		}
+	} else {
+		var inv *Inventory
+		f, err := os.Open(dataStorePath)
+		defer f.Close()
+		if err != nil {
+			log.Fatalf("Unable to read from the database %s", err)
+		}
+		log.Printf("Found an existing database, reloading")
+		json.NewDecoder(f).Decode(&inv)
+		return inv
 	}
 
 	inv := Inventory{
@@ -320,4 +330,8 @@ func createDatastore(path string) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+func init() {
+	log.SetOutput(os.Stdout)
 }
